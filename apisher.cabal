@@ -1,0 +1,59 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           apisher
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/apisher#readme>
+homepage:       https://github.com/Ordluks/apisher#readme
+bug-reports:    https://github.com/Ordluks/apisher/issues
+author:         Ordluks
+maintainer:     wifi355s31@gmail.com
+copyright:      2025 Yakov Basaranovich
+license:        GPL-3.0-only
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/Ordluks/apisher
+
+library
+  exposed-modules:
+      Network.Apisher
+  other-modules:
+      Paths_apisher
+  autogen-modules:
+      Paths_apisher
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , cereal >=0.5.8.3
+    , network >=3.1.4.0
+    , network-run >=0.2.8
+  default-language: Haskell2010
+
+test-suite apisher-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_apisher
+  autogen-modules:
+      Paths_apisher
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      apisher
+    , base >=4.7 && <5
+    , bytestring
+    , cereal >=0.5.8.3
+  default-language: Haskell2010
