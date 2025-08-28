@@ -10,14 +10,13 @@ extra-source-files:
 - README.md
 - CHANGELOG.md
 
-# Metadata used when publishing your package
 synopsis:            Library for fast creation you light-weight TCP-based server API
 category:            Web
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/apisher#readme>
+description:         Please see the README on GitHub at <https://github.com/Ordluks/apisher#readme>
 
 dependencies:
 - base >= 4.7 && < 5
