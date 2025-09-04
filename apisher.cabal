@@ -27,7 +27,7 @@ source-repository head
 
 library
   exposed-modules:
-      Network.Apisher
+      Web.Apisher
   other-modules:
       Paths_apisher
   autogen-modules:

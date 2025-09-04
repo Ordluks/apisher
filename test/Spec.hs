@@ -7,53 +7,48 @@
 import Control.Concurrent (forkIO)
 import Control.Monad (void)
 import Data.Serialize
-import Network.Apisher (APIMethod (..), RequestHandler, runAPI, runAPIMethod, sendRequest)
+
 import Network.Run.TCP (runTCPClient, runTCPServer)
 import Test.Tasty (TestName, TestTree, defaultMain, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase)
+import Web.Apisher
 
-data APIMethodName
-  = ExampleMethod1
-  | ExampleMethod2
+data ExampleAPI
+  = ExampleService1
+  | ExampleService2
   deriving (Enum)
 
-fromEnumN :: (Num n, Enum a) => a -> n
-fromEnumN = fromIntegral . fromEnum
+data Example1 = Example1
 
-toEnumN :: (Integral n, Enum a) => n -> a
-toEnumN = toEnum . fromIntegral
+instance Service Example1 where
+  data RequestContent Example1 = Example1Request {ex1Req :: String}
+  data ResponseContent Example1 = Example1Response {ex1Res :: String}
 
-data Example1
+  typeOfRequest = const $ fromEnum ExampleService1
 
-instance APIMethod Example1 where
-  data RequestContent Example1 = Example1Request {exm1ReqMsg :: String}
-  data ResponseContent Example1 = Example1Response {exm1ResMsg :: String}
+  serializeRequest = put . ex1Req
+  deserializeRequest = Example1Request <$> get
 
-  typeOfRequest = const $ fromEnumN ExampleMethod1
+  serializeResponse = put . ex1Res
+  deserializeResponse = Example1Response <$> get
 
-  serializeRequestContent = put . exm1ReqMsg
-  deserializeRequestContent = Example1Request <$> get
+  handleRequest = return . Example1Response . (++ " response") . ex1Req
 
-  serializeResponseContent = put . exm1ResMsg
-  deserializeResponseContent = Example1Response <$> get
+data Example2 = Example2
 
-  handleRequest = return . Example1Response . (++ " response") . exm1ReqMsg
+instance Service Example2 where
+  data RequestContent Example2 = Example2Request {ex2Req :: String}
+  data ResponseContent Example2 = Example2Response {ex2Res :: String}
 
-data Example2
+  typeOfRequest = const $ fromEnum ExampleService2
 
-instance APIMethod Example2 where
-  data RequestContent Example2 = Example2Request {exm2ReqMsg :: String}
-  data ResponseContent Example2 = Example2Response {exm2ResMsg :: String}
+  serializeRequest = put . ex2Req
+  deserializeRequest = Example2Request <$> get
 
-  typeOfRequest = const $ fromEnumN ExampleMethod1
+  serializeResponse = put . ex2Res
+  deserializeResponse = Example2Response <$> get
 
-  serializeRequestContent = put . exm2ReqMsg
-  deserializeRequestContent = Example2Request <$> get
-
-  serializeResponseContent = put . exm2ResMsg
-  deserializeResponseContent = Example2Response <$> get
-
-  handleRequest = return . Example2Response . exm2ReqMsg
+  handleRequest = return . Example2Response . (++ " response") . ex2Req
 
 deriving instance Eq (ResponseContent Example1)
 deriving instance Show (ResponseContent Example1)
@@ -61,20 +56,27 @@ deriving instance Show (ResponseContent Example1)
 deriving instance Eq (ResponseContent Example2)
 deriving instance Show (ResponseContent Example2)
 
+api :: API ExampleAPI
+api =
+  API
+    { switchServiceRunner = \case
+        ExampleService1 -> runService Example1
+        ExampleService2 -> runService Example2
+    , apiOnError = return . encode
+    }
+
 runServer :: IO ()
-runServer = runTCPServer Nothing "8080" $ runAPI $ \n -> case toEnumN n of
-  ExampleMethod1 -> runAPIMethod (handleRequest :: RequestHandler Example1)
-  ExampleMethod2 -> runAPIMethod (handleRequest :: RequestHandler Example2)
+runServer = runTCPServer Nothing "8080" $ runAPI api
 
 testSendRequest ::
-  (APIMethod a, Eq (ResponseContent a), Show (ResponseContent a)) =>
+  (Service s, Eq (ResponseContent s), Show (ResponseContent s)) =>
   TestName ->
-  RequestContent a ->
-  ResponseContent a ->
+  RequestContent s ->
+  ResponseContent s ->
   TestTree
-testSendRequest testMsg req expectedRes = testCase testMsg $
+testSendRequest testName req expectedRes = testCase testName $
   runTCPClient "127.0.0.1" "8080" $ \sock -> do
-    res <- sendRequest req sock
+    res <- sendRequestToSocket req sock
     assertEqual "response content must be equal expected response content" expectedRes res
 
 tests :: TestTree
