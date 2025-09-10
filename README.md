@@ -1,19 +1,22 @@
 # APIsher
 
-It is library provides you a simple engine to create fast and light-weight server API thats can work over TCP or UDP protocols.
+This library provides you a simple engine to create fast and light-weight server API thats can work over TCP or UDP protocols.
 
 ## Terminology
 
+### API
+API is how a backend program should be accessed by other frontend programs and what actions it should perform in doing so.
+
 ### Request and response
+A **request** to the backend coming from frontend and informing about the actions to be performed and their details and the **response** that a frontend expects to receive as the result of its request.
 
-**Request** is message from client to server. It is *contains* all information and data about action that server needs to do. **Response** sends from server to client after request handling ends and contains some data requested by client.
-
-### API method
+### Service
+Service 
 
 **API method** is an action that your server backend can do for your frontend. **Request content**, **response content** and **request handler** must be implemented for any method. **Request handler** is function thats takes **request content** run some action and return **response content**.
 
 ```haskell
-forall a . (APIMethod a) => RequestContent a -> IO (ResponseContent) -- RequestHandler type reference
+forall s. (Service s) => RequestContent s -> IO (ResponseContent s) -- RequestHandler
 ```
 
 ## Tutorial
