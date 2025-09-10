@@ -9,6 +9,8 @@ module Web.Apisher (
   ServiceRunner,
   RequestHandler,
   API (..),
+  APIErrorType (..),
+  APIError (..),
   runService,
   runAPI,
   sendRequestToSocket',
@@ -165,6 +167,7 @@ sendRequestToSocket req sock = do
 data APIErrorType
   = InvalidRequest
   | InvalidResponse
+  | OtherError
   deriving (Enum, Show)
 
 instance Serialize APIErrorType where
