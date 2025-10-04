@@ -21,6 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/Ordl
 dependencies:
 - base >= 4.7 && < 5
 - network >= 3.1.4.0
+- network-run
 - cereal >= 0.5.8.3
 - bytestring
 
@@ -37,6 +38,13 @@ ghc-options:
 
 library:
   source-dirs: src
+
+executables:
+  apisher-example:
+    main: Main.hs
+    source-dirs: example
+    dependencies:
+    - apisher
 
 tests:
   apisher-test:
