@@ -9,6 +9,8 @@ module Web.Apisher (
   ServiceType (..),
   Service,
   Backend (..),
+  ApisherExceptionType (..),
+  ApisherException (..),
   createService,
   backendHandleConnection,
   tryConnectionSendRequest,
